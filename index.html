@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitalforce · Tasa de Cierre por Comercial</title>
+<style>
+  :root{--forest:#1F7A43;--forest-dark:#155C33;--terracotta:#6B4A34;--gold:#C9A66B;--sage:#A9C08F;--sage-light:#E9F0E3;--cream:#FBF8F2;--ink:#2B2B26;--muted:#6B6B60;--white:#FFF;--green:#1F7A43;--yellow:#B8860B;--red:#B03A2E;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Calibri,"Segoe UI",Cambria,Georgia,serif;background:var(--cream);color:var(--ink);line-height:1.5;padding-bottom:60px;}
+  header.hero{background:linear-gradient(135deg,var(--forest-dark) 0%,var(--forest) 60%,var(--sage) 130%);color:#fff;padding:36px 24px 28px;text-align:center;box-shadow:0 4px 18px rgba(21,92,51,.25);}
+  header.hero h1{font-family:Cambria,Georgia,serif;font-size:1.9rem;font-weight:700;margin-bottom:6px;}
+  header.hero p.sub{font-size:.98rem;opacity:.92;max-width:760px;margin:0 auto;}
+  header.hero p.tag{margin-top:10px;display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 16px;font-size:.8rem;}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 20px 0;}
+  .qbar{background:#fff;border-left:5px solid var(--gold);border-radius:10px;padding:14px 20px;margin-bottom:24px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+  .qbar .qitem{font-size:.88rem;color:var(--muted);}
+  .qbar .qitem b{color:var(--forest-dark);font-family:Cambria,Georgia,serif;}
+  .qbar .timebar{flex:1;min-width:180px;height:8px;background:var(--sage-light);border-radius:6px;overflow:hidden;}
+  .qbar .timebar-fill{height:100%;background:var(--gold);border-radius:6px;}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;margin-bottom:30px;}
+  .card{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid #EFE9DC;overflow:hidden;}
+  .card-head{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--sage-light);border-bottom:1px solid #E0D8C4;}
+  .avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Cambria,Georgia,serif;font-weight:700;font-size:1.2rem;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  .card-head .names{flex:1;} .card-head .comercial{font-family:Cambria,Georgia,serif;font-weight:700;font-size:1.05rem;color:var(--forest-dark);} .card-head .zona{font-size:.8rem;color:var(--muted);}
+  .badge{padding:4px 12px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#fff;flex-shrink:0;}
+  .badge.adelantado{background:var(--green);} .badge.aldia{background:var(--yellow);} .badge.atrasado{background:var(--red);}
+  .card-body{padding:16px 18px 18px;} .metric-row{margin-bottom:14px;}
+  .metric-row .mlabel{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-bottom:4px;} .metric-row .mlabel b{color:var(--ink);font-weight:600;}
+  .gauge-track{height:12px;background:var(--sage-light);border-radius:8px;overflow:hidden;position:relative;}
+  .gauge-fill{height:100%;border-radius:8px;} .gauge-fill.litros{background:linear-gradient(90deg,var(--forest),var(--sage));} .gauge-fill.usd{background:linear-gradient(90deg,var(--terracotta),var(--gold));}
+  .gauge-marker{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.55;}
+  .mvalue{font-size:.78rem;color:var(--muted);margin-top:3px;}
+  .ritmo-strip{margin-top:12px;padding-top:12px;border-top:1px dashed #E0D8C4;font-size:.82rem;color:var(--muted);display:flex;justify-content:space-between;} .ritmo-strip b{color:var(--ink);}
+  .totals-card{background:linear-gradient(135deg,var(--forest-dark),var(--forest));color:#fff;border-radius:16px;padding:20px 24px;margin-bottom:24px;box-shadow:0 4px 14px rgba(21,92,51,.25);}
+  .totals-card h2{font-family:Cambria,Georgia,serif;font-size:1.15rem;margin-bottom:12px;}
+  .totals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
+  .totals-grid .tlabel{font-size:.76rem;opacity:.85;} .totals-grid .tvalue{font-family:Cambria,Georgia,serif;font-size:1.3rem;font-weight:700;}
+  .aparte{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:30px;}
+  .aparte .abox{background:#fff;border:1px dashed #C9A66B;border-radius:14px;padding:16px 20px;}
+  .aparte .atit{font-family:Cambria,Georgia,serif;color:var(--terracotta);font-weight:700;font-size:1rem;margin-bottom:6px;}
+  .aparte .aval{font-family:Cambria,Georgia,serif;font-size:1.5rem;font-weight:700;color:var(--forest-dark);}
+  .aparte .anote{font-size:.76rem;color:var(--muted);margin-top:4px;}
+  .method{background:#fff;border-radius:14px;padding:22px 26px;border:1px solid #EFE9DC;}
+  .method h2{font-family:Cambria,Georgia,serif;color:var(--forest-dark);font-size:1.1rem;margin-bottom:12px;}
+  .method ul{padding-left:20px;color:var(--muted);font-size:.86rem;} .method li{margin-bottom:8px;} .method b{color:var(--ink);}
+  footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:30px;padding:0 20px;}
+  @media(max-width:600px){header.hero h1{font-size:1.4rem;}.qbar{flex-direction:column;align-items:flex-start;}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>📈 Tasa de Cierre por Comercial</h1>
+  <p class="sub">Ventas por comercial vs. objetivo del trimestre en curso. Netas (venta menos notas de crédito), en litros y USD, <b>sin polímeros</b> (van aparte).</p>
+  <p class="tag">Agroinsumos Tres Esquinas SRL · Vitalforce · Actualización automática desde existencias</p>
+</header>
+<div class="wrap">
+  <div class="qbar" id="qbar"></div>
+  <div class="totals-card" id="totalsCard"></div>
+  <div class="card-grid" id="cardGrid"></div>
+  <div class="aparte" id="aparte"></div>
+  <div class="method">
+    <h2>📋 Cómo leer este tablero</h2>
+    <ul id="metodo"></ul>
+  </div>
+  <footer id="foot"></footer>
+</div>
+<script>
+const DATA = {"trimestre_actual": "Q1", "fecha_hoy": "17/07/2026", "inicio_q": "01/07/2026", "fin_q": "30/09/2026", "dia_q": 17, "dias_totales_q": 92, "tiempo_pct": 0.18478260869565216, "comerciales": [{"zona_nombre": "Z1 - Litoral Sur", "comercial": "Juan Bautista Rappa", "initials": "JR", "color": "#1F7A43", "objetivo_litros": 13888.995829296204, "vendido_litros": 1225, "tasa_litros": 0.08819932089086634, "objetivo_usd": 128735.08986357275, "vendido_usd": 18165.55, "tasa_usd": 0.14110799176239341, "tiempo_pct": 0.18478260869565216, "ritmo": -0.04367461693325875, "estado": "Al dia"}, {"zona_nombre": "Z2 - Litoral Agricola", "comercial": "Martin Sosa", "initials": "MS", "color": "#2E6F9E", "objetivo_litros": 10269.819744626326, "vendido_litros": 120, "tasa_litros": 0.011684723099720412, "objetivo_usd": 114579.80035954616, "vendido_usd": 1497.36, "tasa_usd": 0.013068272027891067, "tiempo_pct": 0.18478260869565216, "ritmo": -0.1717143366677611, "estado": "Atrasado"}, {"zona_nombre": "Z3 - Norte", "comercial": "Juan Damacena", "initials": "JD", "color": "#6B4A34", "objetivo_litros": 4120.199125515659, "vendido_litros": 122, "tasa_litros": 0.029610219381018685, "objetivo_usd": 44795.792148660905, "vendido_usd": 1643.4, "tasa_usd": 0.036686481501346256, "tiempo_pct": 0.18478260869565216, "ritmo": -0.1480961271943059, "estado": "Atrasado"}, {"zona_nombre": "Z4 - Este", "comercial": "Gonzalo Moreno", "initials": "GM", "color": "#C9A66B", "objetivo_litros": 5463.6486862337915, "vendido_litros": 0, "tasa_litros": 0, "objetivo_usd": 108421.59546286563, "vendido_usd": 0, "tasa_usd": 0, "tiempo_pct": 0.18478260869565216, "ritmo": -0.18478260869565216, "estado": "Atrasado"}, {"zona_nombre": "Z5 - Centro-Sur", "comercial": "Cecilia Piovano", "initials": "CP", "color": "#7A8F5A", "objetivo_litros": 2811.481593281861, "vendido_litros": 3, "tasa_litros": 0.001067053046752506, "objetivo_usd": 27356.6091637654, "vendido_usd": 142.2, "tasa_usd": 0.005198012631929103, "tiempo_pct": 0.18478260869565216, "ritmo": -0.17958459606372307, "estado": "Atrasado"}], "total": {"objetivo_litros": 36554.14497895384, "vendido_litros": 1470, "tasa_litros": 0.04021431771544259, "objetivo_usd": 423888.88699841086, "vendido_usd": 21448.510000000002, "tasa_usd": 0.05059936850875831}, "polimeros_usd": 184342, "polimeros_kg": 32000, "corporativo_usd": 121};
+function fmt(n,dec=0){return Number(n||0).toLocaleString('es-UY',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+function pct(n){return (Number(n||0)*100).toFixed(1)+'%';}
+function estadoClass(e){if(e==='Adelantado')return 'adelantado';if(e==='Al dia'||e==='Al día')return 'aldia';return 'atrasado';}
+function renderQbar(){document.getElementById('qbar').innerHTML=`
+  <div class="qitem">Trimestre actual: <b>${DATA.trimestre_actual}</b></div>
+  <div class="qitem">${DATA.inicio_q} → ${DATA.fin_q}</div>
+  <div class="qitem">Hoy: <b>${DATA.fecha_hoy}</b> (día ${DATA.dia_q} de ${DATA.dias_totales_q})</div>
+  <div class="timebar"><div class="timebar-fill" style="width:${Math.min(DATA.tiempo_pct*100,100)}%"></div></div>
+  <div class="qitem"><b>${pct(DATA.tiempo_pct)}</b> del trimestre transcurrido</div>`;}
+function renderTotals(){const t=DATA.total;document.getElementById('totalsCard').innerHTML=`
+  <h2>🏢 Total comerciales (sin polímeros) — ${DATA.trimestre_actual}</h2>
+  <div class="totals-grid">
+   <div><div class="tlabel">Objetivo litros</div><div class="tvalue">${fmt(t.objetivo_litros)} L</div></div>
+   <div><div class="tlabel">Vendido litros</div><div class="tvalue">${fmt(t.vendido_litros)} L</div></div>
+   <div><div class="tlabel">Tasa cierre litros</div><div class="tvalue">${pct(t.tasa_litros)}</div></div>
+   <div><div class="tlabel">Objetivo USD</div><div class="tvalue">USD ${fmt(t.objetivo_usd)}</div></div>
+   <div><div class="tlabel">Vendido USD</div><div class="tvalue">USD ${fmt(t.vendido_usd)}</div></div>
+   <div><div class="tlabel">Tasa cierre USD</div><div class="tvalue">${pct(t.tasa_usd)}</div></div>
+  </div>`;}
+function renderCards(){const g=document.getElementById('cardGrid');g.innerHTML='';DATA.comerciales.forEach(c=>{
+  const lp=Math.min(c.tasa_litros*100,100),up=Math.min(c.tasa_usd*100,100),tp=Math.min(c.tiempo_pct*100,100);
+  const el=document.createElement('div');el.className='card';el.innerHTML=`
+   <div class="card-head"><div class="avatar" style="background:${c.color}">${c.initials}</div>
+     <div class="names"><div class="comercial">${c.comercial}</div><div class="zona">${c.zona_nombre}</div></div>
+     <div class="badge ${estadoClass(c.estado)}">${c.estado}</div></div>
+   <div class="card-body">
+     <div class="metric-row"><div class="mlabel"><span>Litros</span><b>${pct(c.tasa_litros)}</b></div>
+       <div class="gauge-track"><div class="gauge-fill litros" style="width:${lp}%"></div><div class="gauge-marker" style="left:${tp}%"></div></div>
+       <div class="mvalue">${fmt(c.vendido_litros,0)} L vendidos de ${fmt(c.objetivo_litros,0)} L objetivo</div></div>
+     <div class="metric-row"><div class="mlabel"><span>USD</span><b>${pct(c.tasa_usd)}</b></div>
+       <div class="gauge-track"><div class="gauge-fill usd" style="width:${up}%"></div><div class="gauge-marker" style="left:${tp}%"></div></div>
+       <div class="mvalue">USD ${fmt(c.vendido_usd,0)} vendidos de USD ${fmt(c.objetivo_usd,0)} objetivo</div></div>
+     <div class="ritmo-strip"><span>Tiempo transcurrido: <b>${pct(c.tiempo_pct)}</b></span><span>Ritmo: <b>${(c.ritmo>=0?'+':'')+pct(c.ritmo)}</b></span></div>
+   </div>`;g.appendChild(el);});}
+function renderAparte(){document.getElementById('aparte').innerHTML=`
+  <div class="abox"><div class="atit">🧪 Ventas polímeros (aparte)</div>
+    <div class="aval">USD ${fmt(DATA.polimeros_usd)}</div>
+    <div class="anote">${fmt(DATA.polimeros_kg)} Kg en el trimestre · no cuentan para la tasa de cierre por comercial</div></div>
+  <div class="abox"><div class="atit">🏢 Ventas corporativas / sin vendedor</div>
+    <div class="aval">USD ${fmt(DATA.corporativo_usd)}</div>
+    <div class="anote">Ventas Generales y sin vendedor asignado (agro-otros, trimestre en curso)</div></div>`;}
+function renderMetodo(){document.getElementById('metodo').innerHTML=`
+  <li><b>Fuente automática:</b> los datos salen de la planilla de existencias del sistema y se actualizan solos (refresco diario). Esta página es la foto del último refresco.</li>
+  <li><b>Ventas netas:</b> cada venta suma y cada nota de crédito/devolución resta. Se excluyen exportaciones y venta de energía a UTE.</li>
+  <li><b>Por comercial real:</b> la venta se atribuye al vendedor de la factura (no a la zona). Ventas sin vendedor o "Ventas Generales" van al recuadro corporativo.</li>
+  <li><b>Polímeros aparte:</b> PLATA POLIGRAN, BINDER y demás polímeros se muestran por separado y no afectan la tasa de cierre agro de cada comercial.</li>
+  <li><b>Tasa de cierre:</b> % del objetivo del trimestre ya vendido, en litros y USD por separado. <b>Ritmo</b> = tasa USD menos % de tiempo transcurrido (positivo = adelantado).</li>`;}
+function renderFoot(){document.getElementById('foot').innerHTML=`Generado automáticamente desde el plan comercial 26/27 · Fuente: existencias (ERP) · Uso interno · Última actualización: ${DATA.fecha_hoy}`;}
+renderQbar();renderTotals();renderCards();renderAparte();renderMetodo();renderFoot();
+</script>
+</body>
+</html>
